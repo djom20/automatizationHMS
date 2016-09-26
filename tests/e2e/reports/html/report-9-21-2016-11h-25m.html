@@ -1,0 +1,1288 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8"/>
+  <style type="text/css">
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #fff;
+      color: #282828;
+    }
+
+    .feature-navigator {
+      position: fixed;
+      overflow-y: auto;
+      height: 100%;
+      width: 20%;
+      float: left;
+    }
+
+    .report-container {
+      margin-top: 60px;
+      margin-left: 20%;
+      width: 75%;
+      float: left;
+    }
+
+    a, a:hover, a:visited {
+      color: #000;
+      text-decoration: none;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      text-align: left;
+      background-color: #eee;
+      color: #999;
+      text-transform: capitalize;
+    }
+
+    th, td {
+      padding: 5px 10px;
+      border-bottom: rgba(162, 162, 162, 0.16) 1px solid;
+    }
+
+    tr.failed { cursor: pointer; }
+
+    tr.passed td { background-color: rgb(150, 250, 150); }
+    tr.failed td { background-color: rgb(250, 150, 150); }
+
+    td.status {
+      text-transform: capitalize;
+    }
+
+    .datatable {
+      margin-left: 2em;
+      width: auto;
+      border-width: 1pt;
+      margin-top: 0.6em;
+      font-size: 80%;
+    }
+    .datatable td {
+      border: rgba(162, 162, 162, 0.16) 1px solid;
+    }
+
+    h1 {
+      margin: 0;
+      padding: 20px 10px 10px 10px;
+      color: #282828;
+    }
+
+    h2 {
+      margin-top: 5px;
+      margin-bottom: 5px;
+    }
+
+    h2.component {
+      color: #282828;
+      padding: 0 10px 10px 10px;
+    }
+
+    h3 { margin: 25px 0 10px 0; }
+
+    img {
+      max-width: 100%;
+      margin-top: 10px;
+    }
+
+    .filename {
+      margin: 0 0 10px 0;
+      color: #999;
+    }
+
+    span.tags {
+      float: right;
+      font-size: 15px;
+      color: #888;
+    }
+
+    span.scenario-tag {
+      float: right;
+      font-size: 15px;
+      color: #888;
+      margin-left: 0.5em;
+    }
+
+    p.story {
+      font-size: 20px;
+      color: #888;
+      font-style: italic;
+      padding-left: 20px;
+    }
+
+    div.report {
+      width: 100%;
+      float: left;
+      padding: 10px;
+      background: #fff;
+      padding-bottom: 10px;
+    }
+
+    td.result,
+    .duration { text-align: right; }
+
+    .hidden { display: none; }
+
+    .header {
+      width: 100%;
+      float: left;
+    }
+
+    .summary,
+    .feature-list,
+    .scenario-list {
+      list-style-type: none;
+      margin: 0;
+      padding: 10px;
+    }
+
+    .summary li,
+    .feature-list li,
+    .scenario-list li { padding: 10px; }
+
+    .scenario-list li a { color: #999; }
+
+    .summary li { padding: 5px 10px; }
+
+    .feature-list li {
+      border-top: rgba(162, 162, 162, 0.16) 1px solid;
+      border-bottom: rgba(162, 162, 162, 0.16) 1px solid;
+    }
+
+    .scenario-list li { border: none; }
+
+    .scenario-list { padding: 10px 0; }
+
+    .summary li,
+    .feature-list li { font-weight: bold; }
+
+    .scenario-list li { font-weight: normal; }
+
+    .feature-list > li.passed { border-left: 5px solid rgb(150, 250, 150); }
+    .feature-list > li.failed { border-left: 5px solid rgb(250, 150, 150); }
+
+    .scenario-list > li.passed a { color: #999; }
+    .scenario-list > li.failed a { color: rgb(250, 150, 150); }
+
+    .summary span.OK  { color: rgb(150, 250, 150); }
+    .summary span.NOK { color: rgb(250, 150, 150); }
+
+    .footer {
+      color: #3C494C;
+      text-align: center;
+      padding: 20px 0;
+      float: left;
+      width: 100%;
+    }
+
+    .footer a, footer a:visited { color: #3C494C; }
+
+    .copy-to-clipboard { /* as small as possible - when hidden, copy will not work */
+      width: 2em;
+      height: 2em;
+      position: fixed;
+      top: 0;
+      left: 0;
+      border: none;
+      outline: none;
+      boxShadow: none;
+    }
+
+    @media (max-width: 500px) {
+      .feature-navigator {
+        position: relative;
+        height: auto;
+        width: 100%;
+        clear: both;
+        overflow: auto;
+      }
+      .report-container {
+        margin-top: 1em;
+        margin-left: auto;
+        width: 100%
+      }
+    }
+  </style>
+  <title>Cucumber Report</title>
+</head>
+<body>
+
+<div class="feature-navigator">
+  <div class="header">
+    <h1>Cucumber Report</h1>
+
+    <h2 class="component"></h2>
+  </div>
+
+  <ul class="summary">
+    <li>2 Features</li>
+    <li>8 Scenarios</li>
+    <li>6 Passed scenarios</li>
+    <li>2 Failing scenarios</li>
+    <li>Status <span class="NOK">NOK</span></li>
+  </ul>
+
+  <ul class="feature-list">
+    <li class="failed">
+      <a href="#F_the-user-adds-some-info">The user adds some info</a>
+      <ul class="scenario-list">
+        <li class="passed"><a href="#S_the-user-adds-some-info;the-user-add-a-doctor">The user add a Doctor</a></li>
+        <li class="passed"><a href="#S_the-user-adds-some-info;the-user-add-a-patient">The user add a Patient</a></li>
+        <li class="passed"><a href="#S_the-user-adds-some-info;the-user-add-a-room">The user add a Room</a></li>
+        <li class="passed"><a href="#S_the-user-adds-some-info;the-user-add-a-hospital">The user add a Hospital</a></li>
+        <li class="failed"><a href="#S_the-user-adds-some-info;the-user-add-a-appointment">The user add a Appointment</a></li>
+      </ul>
+    </li>
+    <li class="failed">
+      <a href="#F_the-user-forgot-put-some-info-in-appointment&#39;s-form">The user forgot put some info in appointment&#39;s form</a>
+      <ul class="scenario-list">
+        <li class="failed"><a href="#S_the-user-forgot-put-some-info-in-appointment&#39;s-form;the-user-forgot-put-the-day-of-the-appointment">The user forgot put the day of the appointment</a></li>
+        <li class="passed"><a href="#S_the-user-forgot-put-some-info-in-appointment&#39;s-form;the-user-forgot-put-the-id-of-patient">The user forgot put the ID of patient</a></li>
+        <li class="passed"><a href="#S_the-user-forgot-put-some-info-in-appointment&#39;s-form;the-user-forgot-put-the-id-of-doctor">The user forgot put the ID of doctor</a></li>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+<div class="report-container">
+  <div class="report" id="F_the-user-adds-some-info">
+    <h2>Feature: The user adds some info <span class="tags">@complete, @adds</span></h2>
+
+    <p class="filename">&#x2F;Users&#x2F;ideadev&#x2F;Desktop&#x2F;automatization&#x2F;tests&#x2F;e2e&#x2F;features&#x2F;user_adds_some_info.feature</p>
+
+    <p class="story"></p>
+    <h3 id="S_the-user-adds-some-info;the-user-add-a-doctor">
+      Scenario: The user add a Doctor
+      <span class="scenario-tag">@complete</span>
+      <span class="scenario-tag">@adds</span>
+    </h3>
+
+    <table>
+      <tr>
+        <th style="width: 100px;">Condition</th>
+        <th>Step</th>
+        <th style="width: 100px;">Line</th>
+        <th class="duration" style="width: 100px;">Duration</th>
+        <th style="width: 100px;">Status</th>
+      </tr>
+
+      <tr class="passed">
+        <td>Given </td>
+        <td>
+          the user the user is on page HMS
+          <table class="datatable">
+            <!--  -->
+          </table>
+        </td>
+        <td>6</td>
+        <td class="duration">2.94s</td>
+        <td class="status">passed</td>
+      </tr>
+
+      <tr class="hidden passed">
+        <td colspan="5">
+          <pre></pre>
+        </td>
+      </tr>
+      <tr class="passed">
+        <td>When </td>
+        <td>
+          the user clicks on add &quot;Doctor&quot;
+          <table class="datatable">
+            <!--  -->
+          </table>
+        </td>
+        <td>7</td>
+        <td class="duration">0.41s</td>
+        <td class="status">passed</td>
+      </tr>
+
+      <tr class="hidden passed">
+        <td colspan="5">
+          <pre></pre>
+        </td>
+      </tr>
+      <tr class="passed">
+        <td>And </td>
+        <td>
+          the user fills all fields of &quot;Doctor&quot;
+          <table class="datatable">
+            <!--  -->
+          </table>
+        </td>
+        <td>8</td>
+        <td class="duration">0.70s</td>
+        <td class="status">passed</td>
+      </tr>
+
+      <tr class="hidden passed">
+        <td colspan="5">
+          <pre></pre>
+        </td>
+      </tr>
+      <tr class="passed">
+        <td>Then </td>
+        <td>
+          the user clicks on save button
+          <table class="datatable">
+            <!--  -->
+          </table>
+        </td>
+        <td>9</td>
+        <td class="duration">0.26s</td>
+        <td class="status">passed</td>
+      </tr>
+
+      <tr class="hidden passed">
+        <td colspan="5">
+          <pre></pre>
+        </td>
+      </tr>
+      <tr class="passed">
+        <td>And </td>
+        <td>
+          the &quot;Datos guardados correctamente.&quot; message should be displayed
+          <table class="datatable">
+            <!--  -->
+          </table>
+        </td>
+        <td>10</td>
+        <td class="duration">0.08s</td>
+        <td class="status">passed</td>
+      </tr>
+
+      <tr class="hidden passed">
+        <td colspan="5">
+          <pre></pre>
+        </td>
+      </tr>
+
+    </table>
+
+    
+    <img src="The_user_add_a_Doctor_14.png"/>
+    <h3 id="S_the-user-adds-some-info;the-user-add-a-patient">
+      Scenario: The user add a Patient
+      <span class="scenario-tag">@complete</span>
+      <span class="scenario-tag">@adds</span>
+    </h3>
+
+    <table>
+      <tr>
+        <th style="width: 100px;">Condition</th>
+        <th>Step</th>
+        <th style="width: 100px;">Line</th>
+        <th class="duration" style="width: 100px;">Duration</th>
+        <th style="width: 100px;">Status</th>
+      </tr>
+
+      <tr class="passed">
+        <td>Given </td>
+        <td>
+          the user the user is on page HMS
+          <table class="datatable">
+            <!--  -->
+          </table>
+        </td>
+        <td>6</td>
+        <td class="duration">0.28s</td>
+        <td class="status">passed</td>
+      </tr>
+
+      <tr class="hidden passed">
+        <td colspan="5">
+          <pre></pre>
+        </td>
+      </tr>
+      <tr class="passed">
+        <td>When </td>
+        <td>
+          the user clicks on add &quot;Patient&quot;
+          <table class="datatable">
+            <!--  -->
+          </table>
+        </td>
+        <td>7</td>
+        <td class="duration">0.33s</td>
+        <td class="status">passed</td>
+      </tr>
+
+      <tr class="hidden passed">
+        <td colspan="5">
+          <pre></pre>
+        </td>
+      </tr>
+      <tr class="passed">
+        <td>And </td>
+        <td>
+          the user fills all fields of &quot;Patient&quot;
+          <table class="datatable">
+            <!--  -->
+          </table>
+        </td>
+        <td>8</td>
+        <td class="duration">0.81s</td>
+        <td class="status">passed</td>
+      </tr>
+
+      <tr class="hidden passed">
+        <td colspan="5">
+          <pre></pre>
+        </td>
+      </tr>
+      <tr class="passed">
+        <td>Then </td>
+        <td>
+          the user clicks on save button
+          <table class="datatable">
+            <!--  -->
+          </table>
+        </td>
+        <td>9</td>
+        <td class="duration">0.24s</td>
+        <td class="status">passed</td>
+      </tr>
+
+      <tr class="hidden passed">
+        <td colspan="5">
+          <pre></pre>
+        </td>
+      </tr>
+      <tr class="passed">
+        <td>And </td>
+        <td>
+          the &quot;Datos guardados correctamente.&quot; message should be displayed
+          <table class="datatable">
+            <!--  -->
+          </table>
+        </td>
+        <td>10</td>
+        <td class="duration">0.05s</td>
+        <td class="status">passed</td>
+      </tr>
+
+      <tr class="hidden passed">
+        <td colspan="5">
+          <pre></pre>
+        </td>
+      </tr>
+
+    </table>
+
+    
+    <img src="The_user_add_a_Patient_15.png"/>
+    <h3 id="S_the-user-adds-some-info;the-user-add-a-room">
+      Scenario: The user add a Room
+      <span class="scenario-tag">@complete</span>
+      <span class="scenario-tag">@adds</span>
+    </h3>
+
+    <table>
+      <tr>
+        <th style="width: 100px;">Condition</th>
+        <th>Step</th>
+        <th style="width: 100px;">Line</th>
+        <th class="duration" style="width: 100px;">Duration</th>
+        <th style="width: 100px;">Status</th>
+      </tr>
+
+      <tr class="passed">
+        <td>Given </td>
+        <td>
+          the user the user is on page HMS
+          <table class="datatable">
+            <!--  -->
+          </table>
+        </td>
+        <td>6</td>
+        <td class="duration">0.16s</td>
+        <td class="status">passed</td>
+      </tr>
+
+      <tr class="hidden passed">
+        <td colspan="5">
+          <pre></pre>
+        </td>
+      </tr>
+      <tr class="passed">
+        <td>When </td>
+        <td>
+          the user clicks on add &quot;Room&quot;
+          <table class="datatable">
+            <!--  -->
+          </table>
+        </td>
+        <td>7</td>
+        <td class="duration">0.37s</td>
+        <td class="status">passed</td>
+      </tr>
+
+      <tr class="hidden passed">
+        <td colspan="5">
+          <pre></pre>
+        </td>
+      </tr>
+      <tr class="passed">
+        <td>And </td>
+        <td>
+          the user fills all fields of &quot;Room&quot;
+          <table class="datatable">
+            <!--  -->
+          </table>
+        </td>
+        <td>8</td>
+        <td class="duration">0.20s</td>
+        <td class="status">passed</td>
+      </tr>
+
+      <tr class="hidden passed">
+        <td colspan="5">
+          <pre></pre>
+        </td>
+      </tr>
+      <tr class="passed">
+        <td>Then </td>
+        <td>
+          the user clicks on save button
+          <table class="datatable">
+            <!--  -->
+          </table>
+        </td>
+        <td>9</td>
+        <td class="duration">0.24s</td>
+        <td class="status">passed</td>
+      </tr>
+
+      <tr class="hidden passed">
+        <td colspan="5">
+          <pre></pre>
+        </td>
+      </tr>
+      <tr class="passed">
+        <td>And </td>
+        <td>
+          the &quot;Datos guardados correctamente.&quot; message should be displayed
+          <table class="datatable">
+            <!--  -->
+          </table>
+        </td>
+        <td>10</td>
+        <td class="duration">0.05s</td>
+        <td class="status">passed</td>
+      </tr>
+
+      <tr class="hidden passed">
+        <td colspan="5">
+          <pre></pre>
+        </td>
+      </tr>
+
+    </table>
+
+    
+    <img src="The_user_add_a_Room_16.png"/>
+    <h3 id="S_the-user-adds-some-info;the-user-add-a-hospital">
+      Scenario: The user add a Hospital
+      <span class="scenario-tag">@complete</span>
+      <span class="scenario-tag">@adds</span>
+    </h3>
+
+    <table>
+      <tr>
+        <th style="width: 100px;">Condition</th>
+        <th>Step</th>
+        <th style="width: 100px;">Line</th>
+        <th class="duration" style="width: 100px;">Duration</th>
+        <th style="width: 100px;">Status</th>
+      </tr>
+
+      <tr class="passed">
+        <td>Given </td>
+        <td>
+          the user the user is on page HMS
+          <table class="datatable">
+            <!--  -->
+          </table>
+        </td>
+        <td>6</td>
+        <td class="duration">0.17s</td>
+        <td class="status">passed</td>
+      </tr>
+
+      <tr class="hidden passed">
+        <td colspan="5">
+          <pre></pre>
+        </td>
+      </tr>
+      <tr class="passed">
+        <td>When </td>
+        <td>
+          the user clicks on add &quot;Hospital&quot;
+          <table class="datatable">
+            <!--  -->
+          </table>
+        </td>
+        <td>7</td>
+        <td class="duration">0.35s</td>
+        <td class="status">passed</td>
+      </tr>
+
+      <tr class="hidden passed">
+        <td colspan="5">
+          <pre></pre>
+        </td>
+      </tr>
+      <tr class="passed">
+        <td>And </td>
+        <td>
+          the user fills all fields of &quot;Hospital&quot;
+          <table class="datatable">
+            <!--  -->
+          </table>
+        </td>
+        <td>8</td>
+        <td class="duration">0.75s</td>
+        <td class="status">passed</td>
+      </tr>
+
+      <tr class="hidden passed">
+        <td colspan="5">
+          <pre></pre>
+        </td>
+      </tr>
+      <tr class="passed">
+        <td>Then </td>
+        <td>
+          the user clicks on save button
+          <table class="datatable">
+            <!--  -->
+          </table>
+        </td>
+        <td>9</td>
+        <td class="duration">0.23s</td>
+        <td class="status">passed</td>
+      </tr>
+
+      <tr class="hidden passed">
+        <td colspan="5">
+          <pre></pre>
+        </td>
+      </tr>
+      <tr class="passed">
+        <td>And </td>
+        <td>
+          the &quot;Datos guardados correctamente.&quot; message should be displayed
+          <table class="datatable">
+            <!--  -->
+          </table>
+        </td>
+        <td>10</td>
+        <td class="duration">0.05s</td>
+        <td class="status">passed</td>
+      </tr>
+
+      <tr class="hidden passed">
+        <td colspan="5">
+          <pre></pre>
+        </td>
+      </tr>
+
+    </table>
+
+    
+    <img src="The_user_add_a_Hospital_17.png"/>
+    <h3 id="S_the-user-adds-some-info;the-user-add-a-appointment">
+      Scenario: The user add a Appointment
+      <span class="scenario-tag">@complete</span>
+      <span class="scenario-tag">@adds</span>
+    </h3>
+
+    <table>
+      <tr>
+        <th style="width: 100px;">Condition</th>
+        <th>Step</th>
+        <th style="width: 100px;">Line</th>
+        <th class="duration" style="width: 100px;">Duration</th>
+        <th style="width: 100px;">Status</th>
+      </tr>
+
+      <tr class="passed">
+        <td>Given </td>
+        <td>
+          the user the user is on page HMS
+          <table class="datatable">
+            <!--  -->
+          </table>
+        </td>
+        <td>6</td>
+        <td class="duration">0.18s</td>
+        <td class="status">passed</td>
+      </tr>
+
+      <tr class="hidden passed">
+        <td colspan="5">
+          <pre></pre>
+        </td>
+      </tr>
+      <tr class="passed">
+        <td>When </td>
+        <td>
+          the user clicks on add &quot;Appointment&quot;
+          <table class="datatable">
+            <!--  -->
+          </table>
+        </td>
+        <td>7</td>
+        <td class="duration">1.76s</td>
+        <td class="status">passed</td>
+      </tr>
+
+      <tr class="hidden passed">
+        <td colspan="5">
+          <pre></pre>
+        </td>
+      </tr>
+      <tr class="passed">
+        <td>And </td>
+        <td>
+          the user fills all fields of &quot;Appointment&quot;
+          <table class="datatable">
+            <!--  -->
+          </table>
+        </td>
+        <td>8</td>
+        <td class="duration">0.67s</td>
+        <td class="status">passed</td>
+      </tr>
+
+      <tr class="hidden passed">
+        <td colspan="5">
+          <pre></pre>
+        </td>
+      </tr>
+      <tr class="passed">
+        <td>Then </td>
+        <td>
+          the user clicks on save button
+          <table class="datatable">
+            <!--  -->
+          </table>
+        </td>
+        <td>9</td>
+        <td class="duration">0.26s</td>
+        <td class="status">passed</td>
+      </tr>
+
+      <tr class="hidden passed">
+        <td colspan="5">
+          <pre></pre>
+        </td>
+      </tr>
+      <tr class="failed">
+        <td>And </td>
+        <td>
+          the &quot;Datos guardados correctamente.&quot; message should be displayed
+          <table class="datatable">
+            <!--  -->
+          </table>
+        </td>
+        <td>10</td>
+        <td class="duration">0.05s</td>
+        <td class="status">failed</td>
+      </tr>
+
+      <tr class="hidden failed">
+        <td colspan="5">
+          <pre>NoSuchElementError: No element found using locator: By(css selector, .panel-success .panel-body p)
+    at WebDriverError (&#x2F;Users&#x2F;ideadev&#x2F;Desktop&#x2F;automatization&#x2F;node_modules&#x2F;protractor&#x2F;node_modules&#x2F;selenium-webdriver&#x2F;error.js:27:5)
+    at NoSuchElementError (&#x2F;Users&#x2F;ideadev&#x2F;Desktop&#x2F;automatization&#x2F;node_modules&#x2F;protractor&#x2F;node_modules&#x2F;selenium-webdriver&#x2F;error.js:230:5)
+    at &#x2F;Users&#x2F;ideadev&#x2F;Desktop&#x2F;automatization&#x2F;node_modules&#x2F;protractor&#x2F;built&#x2F;element.js:662:27
+    at Promise.invokeCallback_ (&#x2F;Users&#x2F;ideadev&#x2F;Desktop&#x2F;automatization&#x2F;node_modules&#x2F;protractor&#x2F;node_modules&#x2F;selenium-webdriver&#x2F;lib&#x2F;promise.js:1329:14)
+    at TaskQueue.execute_ (&#x2F;Users&#x2F;ideadev&#x2F;Desktop&#x2F;automatization&#x2F;node_modules&#x2F;protractor&#x2F;node_modules&#x2F;selenium-webdriver&#x2F;lib&#x2F;promise.js:2790:14)
+    at TaskQueue.executeNext_ (&#x2F;Users&#x2F;ideadev&#x2F;Desktop&#x2F;automatization&#x2F;node_modules&#x2F;protractor&#x2F;node_modules&#x2F;selenium-webdriver&#x2F;lib&#x2F;promise.js:2773:21)
+    at asyncRun (&#x2F;Users&#x2F;ideadev&#x2F;Desktop&#x2F;automatization&#x2F;node_modules&#x2F;protractor&#x2F;node_modules&#x2F;selenium-webdriver&#x2F;lib&#x2F;promise.js:2652:27)
+    at &#x2F;Users&#x2F;ideadev&#x2F;Desktop&#x2F;automatization&#x2F;node_modules&#x2F;protractor&#x2F;node_modules&#x2F;selenium-webdriver&#x2F;lib&#x2F;promise.js:639:7
+    at process._tickCallback (internal&#x2F;process&#x2F;next_tick.js:103:7)
+Error
+    at ElementArrayFinder.applyAction_ (&#x2F;Users&#x2F;ideadev&#x2F;Desktop&#x2F;automatization&#x2F;node_modules&#x2F;protractor&#x2F;built&#x2F;element.js:371:27)
+    at ElementArrayFinder._this.(anonymous function) [as getText] (&#x2F;Users&#x2F;ideadev&#x2F;Desktop&#x2F;automatization&#x2F;node_modules&#x2F;protractor&#x2F;built&#x2F;element.js:83:30)
+    at ElementFinder._this.(anonymous function) [as getText] (&#x2F;Users&#x2F;ideadev&#x2F;Desktop&#x2F;automatization&#x2F;node_modules&#x2F;protractor&#x2F;built&#x2F;element.js:685:22)
+    at World.&lt;anonymous&gt; (&#x2F;Users&#x2F;ideadev&#x2F;Desktop&#x2F;automatization&#x2F;tests&#x2F;e2e&#x2F;steps&#x2F;user_add_some_info_steps.js:47:52)
+    at _combinedTickCallback (internal&#x2F;process&#x2F;next_tick.js:67:7)</pre>
+        </td>
+      </tr>
+
+    </table>
+
+    
+    <img src="The_user_add_a_Appointment_18.png"/>
+  </div>
+  <div class="report" id="F_the-user-forgot-put-some-info-in-appointment&#39;s-form">
+    <h2>Feature: The user forgot put some info in appointment&#39;s form <span class="tags">@complete, @validate</span></h2>
+
+    <p class="filename">&#x2F;Users&#x2F;ideadev&#x2F;Desktop&#x2F;automatization&#x2F;tests&#x2F;e2e&#x2F;features&#x2F;user_forgot_put_some_info.feature</p>
+
+    <p class="story"></p>
+    <h3 id="S_the-user-forgot-put-some-info-in-appointment&#39;s-form;the-user-forgot-put-the-day-of-the-appointment">
+      Scenario: The user forgot put the day of the appointment
+      <span class="scenario-tag">@complete</span>
+      <span class="scenario-tag">@validate</span>
+    </h3>
+
+    <table>
+      <tr>
+        <th style="width: 100px;">Condition</th>
+        <th>Step</th>
+        <th style="width: 100px;">Line</th>
+        <th class="duration" style="width: 100px;">Duration</th>
+        <th style="width: 100px;">Status</th>
+      </tr>
+
+      <tr class="passed">
+        <td>Given </td>
+        <td>
+          the user the user is on page HMS
+          <table class="datatable">
+            <!--  -->
+          </table>
+        </td>
+        <td>6</td>
+        <td class="duration">0.16s</td>
+        <td class="status">passed</td>
+      </tr>
+
+      <tr class="hidden passed">
+        <td colspan="5">
+          <pre></pre>
+        </td>
+      </tr>
+      <tr class="passed">
+        <td>When </td>
+        <td>
+          the user clicks on add &quot;Appointment&quot;
+          <table class="datatable">
+            <!--  -->
+          </table>
+        </td>
+        <td>7</td>
+        <td class="duration">0.35s</td>
+        <td class="status">passed</td>
+      </tr>
+
+      <tr class="hidden passed">
+        <td colspan="5">
+          <pre></pre>
+        </td>
+      </tr>
+      <tr class="passed">
+        <td>And </td>
+        <td>
+          the user fills the ID of patient
+          <table class="datatable">
+            <!--  -->
+          </table>
+        </td>
+        <td>8</td>
+        <td class="duration">0.16s</td>
+        <td class="status">passed</td>
+      </tr>
+
+      <tr class="hidden passed">
+        <td colspan="5">
+          <pre></pre>
+        </td>
+      </tr>
+      <tr class="passed">
+        <td>And </td>
+        <td>
+          the user fills the ID of doctor
+          <table class="datatable">
+            <!--  -->
+          </table>
+        </td>
+        <td>9</td>
+        <td class="duration">0.19s</td>
+        <td class="status">passed</td>
+      </tr>
+
+      <tr class="hidden passed">
+        <td colspan="5">
+          <pre></pre>
+        </td>
+      </tr>
+      <tr class="passed">
+        <td>Then </td>
+        <td>
+          the user clicks on save button
+          <table class="datatable">
+            <!--  -->
+          </table>
+        </td>
+        <td>10</td>
+        <td class="duration">0.26s</td>
+        <td class="status">passed</td>
+      </tr>
+
+      <tr class="hidden passed">
+        <td colspan="5">
+          <pre></pre>
+        </td>
+      </tr>
+      <tr class="failed">
+        <td>And </td>
+        <td>
+          the &quot;Error:&quot; error should be displayed
+          <table class="datatable">
+            <!--  -->
+          </table>
+        </td>
+        <td>11</td>
+        <td class="duration">0.03s</td>
+        <td class="status">failed</td>
+      </tr>
+
+      <tr class="hidden failed">
+        <td colspan="5">
+          <pre>NoSuchElementError: No element found using locator: By(css selector, h3.panel-title)
+    at WebDriverError (&#x2F;Users&#x2F;ideadev&#x2F;Desktop&#x2F;automatization&#x2F;node_modules&#x2F;protractor&#x2F;node_modules&#x2F;selenium-webdriver&#x2F;error.js:27:5)
+    at NoSuchElementError (&#x2F;Users&#x2F;ideadev&#x2F;Desktop&#x2F;automatization&#x2F;node_modules&#x2F;protractor&#x2F;node_modules&#x2F;selenium-webdriver&#x2F;error.js:230:5)
+    at &#x2F;Users&#x2F;ideadev&#x2F;Desktop&#x2F;automatization&#x2F;node_modules&#x2F;protractor&#x2F;built&#x2F;element.js:662:27
+    at Promise.invokeCallback_ (&#x2F;Users&#x2F;ideadev&#x2F;Desktop&#x2F;automatization&#x2F;node_modules&#x2F;protractor&#x2F;node_modules&#x2F;selenium-webdriver&#x2F;lib&#x2F;promise.js:1329:14)
+    at TaskQueue.execute_ (&#x2F;Users&#x2F;ideadev&#x2F;Desktop&#x2F;automatization&#x2F;node_modules&#x2F;protractor&#x2F;node_modules&#x2F;selenium-webdriver&#x2F;lib&#x2F;promise.js:2790:14)
+    at TaskQueue.executeNext_ (&#x2F;Users&#x2F;ideadev&#x2F;Desktop&#x2F;automatization&#x2F;node_modules&#x2F;protractor&#x2F;node_modules&#x2F;selenium-webdriver&#x2F;lib&#x2F;promise.js:2773:21)
+    at asyncRun (&#x2F;Users&#x2F;ideadev&#x2F;Desktop&#x2F;automatization&#x2F;node_modules&#x2F;protractor&#x2F;node_modules&#x2F;selenium-webdriver&#x2F;lib&#x2F;promise.js:2652:27)
+    at &#x2F;Users&#x2F;ideadev&#x2F;Desktop&#x2F;automatization&#x2F;node_modules&#x2F;protractor&#x2F;node_modules&#x2F;selenium-webdriver&#x2F;lib&#x2F;promise.js:639:7
+    at process._tickCallback (internal&#x2F;process&#x2F;next_tick.js:103:7)
+Error
+    at ElementArrayFinder.applyAction_ (&#x2F;Users&#x2F;ideadev&#x2F;Desktop&#x2F;automatization&#x2F;node_modules&#x2F;protractor&#x2F;built&#x2F;element.js:371:27)
+    at ElementArrayFinder._this.(anonymous function) [as getText] (&#x2F;Users&#x2F;ideadev&#x2F;Desktop&#x2F;automatization&#x2F;node_modules&#x2F;protractor&#x2F;built&#x2F;element.js:83:30)
+    at ElementFinder._this.(anonymous function) [as getText] (&#x2F;Users&#x2F;ideadev&#x2F;Desktop&#x2F;automatization&#x2F;node_modules&#x2F;protractor&#x2F;built&#x2F;element.js:685:22)
+    at World.&lt;anonymous&gt; (&#x2F;Users&#x2F;ideadev&#x2F;Desktop&#x2F;automatization&#x2F;tests&#x2F;e2e&#x2F;steps&#x2F;user_forgot_put_some_info_steps.js:25:38)
+    at _combinedTickCallback (internal&#x2F;process&#x2F;next_tick.js:67:7)</pre>
+        </td>
+      </tr>
+
+    </table>
+
+    
+    <img src="The_user_forgot_put_the_day_of_the_appointment_5.png"/>
+    <h3 id="S_the-user-forgot-put-some-info-in-appointment&#39;s-form;the-user-forgot-put-the-id-of-patient">
+      Scenario: The user forgot put the ID of patient
+      <span class="scenario-tag">@complete</span>
+      <span class="scenario-tag">@validate</span>
+    </h3>
+
+    <table>
+      <tr>
+        <th style="width: 100px;">Condition</th>
+        <th>Step</th>
+        <th style="width: 100px;">Line</th>
+        <th class="duration" style="width: 100px;">Duration</th>
+        <th style="width: 100px;">Status</th>
+      </tr>
+
+      <tr class="passed">
+        <td>Given </td>
+        <td>
+          the user the user is on page HMS
+          <table class="datatable">
+            <!--  -->
+          </table>
+        </td>
+        <td>14</td>
+        <td class="duration">0.21s</td>
+        <td class="status">passed</td>
+      </tr>
+
+      <tr class="hidden passed">
+        <td colspan="5">
+          <pre></pre>
+        </td>
+      </tr>
+      <tr class="passed">
+        <td>When </td>
+        <td>
+          the user clicks on add &quot;Appointment&quot;
+          <table class="datatable">
+            <!--  -->
+          </table>
+        </td>
+        <td>15</td>
+        <td class="duration">0.29s</td>
+        <td class="status">passed</td>
+      </tr>
+
+      <tr class="hidden passed">
+        <td colspan="5">
+          <pre></pre>
+        </td>
+      </tr>
+      <tr class="passed">
+        <td>And </td>
+        <td>
+          the user fills the day of appointment
+          <table class="datatable">
+            <!--  -->
+          </table>
+        </td>
+        <td>16</td>
+        <td class="duration">0.33s</td>
+        <td class="status">passed</td>
+      </tr>
+
+      <tr class="hidden passed">
+        <td colspan="5">
+          <pre></pre>
+        </td>
+      </tr>
+      <tr class="passed">
+        <td>And </td>
+        <td>
+          the user fills the ID of doctor
+          <table class="datatable">
+            <!--  -->
+          </table>
+        </td>
+        <td>17</td>
+        <td class="duration">0.18s</td>
+        <td class="status">passed</td>
+      </tr>
+
+      <tr class="hidden passed">
+        <td colspan="5">
+          <pre></pre>
+        </td>
+      </tr>
+      <tr class="passed">
+        <td>Then </td>
+        <td>
+          the user clicks on save button
+          <table class="datatable">
+            <!--  -->
+          </table>
+        </td>
+        <td>18</td>
+        <td class="duration">0.26s</td>
+        <td class="status">passed</td>
+      </tr>
+
+      <tr class="hidden passed">
+        <td colspan="5">
+          <pre></pre>
+        </td>
+      </tr>
+      <tr class="passed">
+        <td>And </td>
+        <td>
+          the &quot;Error:&quot; error should be displayed
+          <table class="datatable">
+            <!--  -->
+          </table>
+        </td>
+        <td>19</td>
+        <td class="duration">0.04s</td>
+        <td class="status">passed</td>
+      </tr>
+
+      <tr class="hidden passed">
+        <td colspan="5">
+          <pre></pre>
+        </td>
+      </tr>
+
+    </table>
+
+    
+    <img src="The_user_forgot_put_the_ID_of_patient_13.png"/>
+    <h3 id="S_the-user-forgot-put-some-info-in-appointment&#39;s-form;the-user-forgot-put-the-id-of-doctor">
+      Scenario: The user forgot put the ID of doctor
+      <span class="scenario-tag">@complete</span>
+      <span class="scenario-tag">@validate</span>
+    </h3>
+
+    <table>
+      <tr>
+        <th style="width: 100px;">Condition</th>
+        <th>Step</th>
+        <th style="width: 100px;">Line</th>
+        <th class="duration" style="width: 100px;">Duration</th>
+        <th style="width: 100px;">Status</th>
+      </tr>
+
+      <tr class="passed">
+        <td>Given </td>
+        <td>
+          the user the user is on page HMS
+          <table class="datatable">
+            <!--  -->
+          </table>
+        </td>
+        <td>22</td>
+        <td class="duration">0.16s</td>
+        <td class="status">passed</td>
+      </tr>
+
+      <tr class="hidden passed">
+        <td colspan="5">
+          <pre></pre>
+        </td>
+      </tr>
+      <tr class="passed">
+        <td>When </td>
+        <td>
+          the user clicks on add &quot;Appointment&quot;
+          <table class="datatable">
+            <!--  -->
+          </table>
+        </td>
+        <td>23</td>
+        <td class="duration">0.28s</td>
+        <td class="status">passed</td>
+      </tr>
+
+      <tr class="hidden passed">
+        <td colspan="5">
+          <pre></pre>
+        </td>
+      </tr>
+      <tr class="passed">
+        <td>And </td>
+        <td>
+          the user fills the day of appointment
+          <table class="datatable">
+            <!--  -->
+          </table>
+        </td>
+        <td>24</td>
+        <td class="duration">0.23s</td>
+        <td class="status">passed</td>
+      </tr>
+
+      <tr class="hidden passed">
+        <td colspan="5">
+          <pre></pre>
+        </td>
+      </tr>
+      <tr class="passed">
+        <td>And </td>
+        <td>
+          the user fills the ID of patient
+          <table class="datatable">
+            <!--  -->
+          </table>
+        </td>
+        <td>25</td>
+        <td class="duration">0.16s</td>
+        <td class="status">passed</td>
+      </tr>
+
+      <tr class="hidden passed">
+        <td colspan="5">
+          <pre></pre>
+        </td>
+      </tr>
+      <tr class="passed">
+        <td>Then </td>
+        <td>
+          the user clicks on save button
+          <table class="datatable">
+            <!--  -->
+          </table>
+        </td>
+        <td>26</td>
+        <td class="duration">0.24s</td>
+        <td class="status">passed</td>
+      </tr>
+
+      <tr class="hidden passed">
+        <td colspan="5">
+          <pre></pre>
+        </td>
+      </tr>
+      <tr class="passed">
+        <td>And </td>
+        <td>
+          the &quot;Error:&quot; error should be displayed
+          <table class="datatable">
+            <!--  -->
+          </table>
+        </td>
+        <td>27</td>
+        <td class="duration">0.05s</td>
+        <td class="status">passed</td>
+      </tr>
+
+      <tr class="hidden passed">
+        <td colspan="5">
+          <pre></pre>
+        </td>
+      </tr>
+
+    </table>
+
+    
+    <img src="The_user_forgot_put_the_ID_of_doctor_21.png"/>
+  </div>
+</div>
+
+<div class="footer">
+  <p><a href="https://github.com/leinonen/cucumber-html-report">Cucumber HTML Report Generator</a> by <a
+    href="http://leinonen.se">Peter Leinonen</a> 2016.</p>
+</div>
+
+<script type="text/javascript">
+  (function() {
+    'use strict';
+
+    // Thanks to http://stackoverflow.com/questions/400212/how-do-i-copy-to-the-clipboard-in-javascript/30810322#30810322
+    function copyTextToClipboard(text) {
+      // Puts the supplied text into a hidden text area to select it and copy it the clipboard
+      var textArea = document.createElement("textarea");
+      textArea.class = 'copy-to-clipboard';
+      textArea.value = text;
+      document.body.appendChild(textArea);
+      textArea.select();
+      try {
+        document.execCommand('copy');
+      } finally {
+        document.body.removeChild(textArea);
+      }
+    }
+
+    var failed = document.getElementsByClassName('failed');
+    for (var i = 0; i < failed.length; i += 1) {
+      if (failed[i].className === 'failed') {
+        failed[i].addEventListener('click', (function(i) {
+          return function() {
+            if (failed[i].nextElementSibling.classList.contains('hidden')) {
+              failed[i].nextElementSibling.classList.remove('hidden');
+            } else {
+              failed[i].nextElementSibling.classList.add('hidden');
+            }
+            copyTextToClipboard(failed[i].nextElementSibling.textContent);
+          }
+        })(i));
+      }
+      else if (failed[i].classList.contains('hidden')) {
+        console.log('elif here');
+        failed[i].addEventListener('click', (function(i) {
+          return function() {
+            console.log('im here now');
+            if (failed[i].classList.contains('hidden')) {
+              failed[i].classList.remove('hidden');
+            } else {
+              failed[i].classList.add('hidden');
+            }
+          }
+        })(i));
+      }
+    }
+  })(window);
+</script>
+</body>
+</html>

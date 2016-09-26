@@ -1,0 +1,45 @@
+{
+  "name": "Automatization",
+  "version": "1.0.0",
+  "description": "This is the main repository for the tests cases of a Hospital Management System.",
+  "main": "index.html",
+  "scripts": {
+    "e2e-local": "./node_modules/protractor/bin/protractor tests/e2e/config.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/djom20/automatizationHMS.git"
+  },
+  "author": "Ing. Jonathan Olier <djom202@gmail.com>",
+  "license": "ISC",
+  "homepage": "",
+  "dependencies": {
+    "moment": "^2.13.0"
+  },
+  "devDependencies": {
+    "brfs": "latest",
+    "browser-sync": "^2.14.0",
+    "chai": "^3.5.0",
+    "chai-as-promised": "^5.3.0",
+    "cucumber": "^1.0.0",
+    "cucumber-html-report": "^0.4.4",
+    "gulp": "latest",
+    "gulp-jshint": "latest",
+    "gulp-rename": "latest",
+    "gulp-sass": "latest",
+    "gulp-uglify": "latest",
+    "karma": "^0.13.22",
+    "karma-chai": "^0.1.0",
+    "karma-chai-as-promised": "^0.1.2",
+    "karma-sinon": "^1.0.4",
+    "karma-sinon-chai": "^1.2.0",
+    "mocha": "^2.4.5",
+    "open": "0.0.5",
+    "path": "^0.12.7",
+    "protractor": "^3.3.0",
+    "protractor-cucumber-framework": "^0.6.0",
+    "selenium-webdriver": "^2.53.1",
+    "sinon": "^1.17.4",
+    "sinon-chai": "^2.8.0"
+  }
+}
